@@ -51,8 +51,8 @@
     + 회전
         - Rotate right , left (self,z)
             6개의 링크 수정 !
-            
-    * AVL     
+
+    ### AVL     
         + 정의 : 모든 노드에서 1이하의 height 차이 유지
         
         + AVL 삽입
@@ -81,4 +81,4 @@
 
             While v!=none (루트)
         
-    * Red - Black 트리
+    ### Red - Black 트리
