@@ -8,35 +8,35 @@
 ### 힙 (heap)
 
 
-    + 모양 : 마지막 레벨 제외 모두 두개의 자식
-    + 성질 : 부모노드 > 자식노드 (최대힙)
++ 모양 : 마지막 레벨 제외 모두 두개의 자식
++ 성질 : 부모노드 > 자식노드 (최대힙)
 
 
 ### 이진 탐색 트리 (BST)
 
 
-    + 정의 : 각 노드의 Left subtree 모든 key값은 노드의 key값보다 작아야 하고,  
++ 정의 : 각 노드의 Left subtree 모든 key값은 노드의 key값보다 작아야 하고,  
     각 노드의 right subtree 모든 key값은 노드의 key값보다 커야한다.  
-    +  _모든 노드에 대하여 위 조건이 만족하면, BST!_
++  _모든 노드에 대하여 위 조건이 만족하면, BST!_
 
 
-    * BST의 순회 (모든 노드 출력하기)  
+* BST의 순회 (모든 노드 출력하기)  
     
-        - Preorder  
-        - Inorder  
-        - Postorder
+    - Preorder  
+    - Inorder  
+    - Postorder
     
-    * BST 탐색 및 삽입 
+* BST 탐색 및 삽입 
 
-        - find_loc(self,key) : 해당 key 노드를 찾거나, 없다면 들어갈 위치 반환
-            - self.root 부터 key 값을 비교하며 left , right 로 내려감!
-            - 반환 값을 이용하여 Insert !
+    - find_loc(self,key) : 해당 key 노드를 찾거나, 없다면 들어갈 위치 반환
+        - self.root 부터 key 값을 비교하며 left , right 로 내려감!
+        - 반환 값을 이용하여 Insert !
     
-    * BST의 삭제
+* BST의 삭제
 
-        - Delete by Merging
+    - Delete by Merging
 
-        - Delete by Copying
+    - Delete by Copying
 
 
 ### 균형이진탐색트리  
