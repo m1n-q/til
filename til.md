@@ -22,9 +22,13 @@
 
     * BST의 순회 (모든 노드 출력하기)  
         
-        - Preorder  
-        - Inorder  
-        - Postorder
+        - Preorder : M - L - R  
+
+        - Inorder : L - M - R  
+
+        - Postorder : L - R - M  
+
+        - 위의 순서로 재귀적으로 순회 !
         
     * BST 탐색 및 삽입 
 
