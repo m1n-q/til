@@ -3,9 +3,11 @@
   
 
 ## 2020.10.31
-
+'''
+아아
+'''
   
-### 힙 (heap)
+### 힙 (heap)  
 
 '''
 + 모양 : 마지막 레벨 제외 모두 두개의 자식
@@ -41,7 +43,8 @@
 
     - Delete by Merging
 
-    - Delete by Copying
+    - Delete by Copying  
+    
 '''  
 
 
