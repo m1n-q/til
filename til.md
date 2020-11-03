@@ -80,5 +80,51 @@
         — 루트노드까지 올라가는 높이 h 번의 로테이트 될수도 !
 
         While v!=none (루트)
-    
+## 2020.11.03
+
 ### Red - Black 트리
+    + 정의 :
+
+
+    + 삽입
+        +BST의 insert 연산 호출 :O(logn)
+
+         x.color = red (기본)
+        +4가지 경우    -- 최대 2회 회전, 색 조정 : O(1) 
+            1. 처음 insert
+                x.color = black
+
+
+            2. x.parent.color == black
+                부모가 black, 단말은 항상 black 
+                -> do nothing
+
+
+            3. x.parent.color == red
+                x의 부모가 red이므로, x의 형제는 black
+
+                3.1. x.uncle.color == red (부모의 형제)
+                    x.grandparent.color == black 임!
+                    x.grandparent.color = red 으로 조정
+                    x.parent.color , x.uncle.color = black 으로 조정
+                    grandparent 입장에서 (parent, uncle)에 black을 준 것.
+                    경로상 black 의 수(height 아님)는 변하지 않음!
+                    parent, uncle 입장에서는 공통적으로 증가한 경우이므로 상관없음   
+
+                    
+                3.2. x.uncle.color == black (부모의 형제)
+
+                    x-p-g -> linear 
+                        p에서 1회 rotate 후 색 재조정
+                    x-p-g -> triangle
+                        x에서부터 1회, p에서 1회 rotate 후 색 재조정
+
+                    5번째 조건 -> 단말까지의 경로상의 bh가 같아야함 !
+    AVL과 Red-Black 모두 search, insert, delete 모두 O(logn)
+
+    회전 수 -|- AVL -|= Red-Black  
+    search | - | -
+    insert | 2 | 2
+    delete | O(logN)  (최악 : 높이 h)| 3
+
+    -> 시간은 logN으로 같지만 회전수가 적다!
