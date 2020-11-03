@@ -53,7 +53,7 @@
             6개의 링크 수정 !
 
 ### AVL     
-    + 정의 : 모든 노드에서 1이하의 height 차이 유지
+    + 정의 : 모든 노드에서 1이하의 height 차이 유지 
     
     + AVL 삽입
         node에 height 인스턴스변수 필요
@@ -120,11 +120,11 @@
                         x에서부터 1회, p에서 1회 rotate 후 색 재조정
 
                     5번째 조건 -> 단말까지의 경로상의 bh가 같아야함 !
-    AVL과 Red-Black 모두 search, insert, delete 모두 O(logn)
+AVL과 Red-Black 모두 search, insert, delete 모두 O(logn)
 
-    회전 수 -|- AVL -|= Red-Black  
-    search | - | -
-    insert | 2 | 2
-    delete | O(logN)  (최악 : 높이 h)| 3
+회전 수 -|- AVL -|= Red-Black  
+search | - | -
+insert | 2 | 2
+delete | O(logN)  (최악 : 높이 h)| 3
 
-    -> 시간은 logN으로 같지만 회전수가 적다!
+-> 시간은 logN으로 같지만 회전수가 적다!
