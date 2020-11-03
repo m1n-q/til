@@ -8,8 +8,8 @@
 ### 힙 (heap)
 
 
-+ 모양 : 마지막 레벨 제외 모두 두개의 자식
-+ 성질 : 부모노드 > 자식노드 (최대힙)
+    + 모양 : 마지막 레벨 제외 모두 두개의 자식
+    + 성질 : 부모노드 > 자식노드 (최대힙)
 
 
 ### 이진 탐색 트리 (BST)
@@ -91,19 +91,19 @@
 
         x.color = red (기본)
     + 4가지 경우    -- 최대 2회 회전, 색 조정 : O(1) 
-        1. 처음 insert
+        - 처음 insert
             x.color = black
 
 
-        2. x.parent.color == black
+        - x.parent.color == black
             부모가 black, 단말은 항상 black 
             -> do nothing
 
 
-        3. x.parent.color == red
+        - x.parent.color == red
             x의 부모가 red이므로, x의 형제는 black
 
-            3. 1. x.uncle.color == red (부모의 형제)
+            - x.uncle.color == red (부모의 형제)
                 x.grandparent.color == black 임!
                 x.grandparent.color = red 으로 조정
                 x.parent.color , x.uncle.color = black 으로 조정
@@ -112,7 +112,7 @@
                 parent, uncle 입장에서는 공통적으로 증가한 경우이므로 상관없음   
 
                 
-            3. 2. x.uncle.color == black (부모의 형제)
+            - x.uncle.color == black (부모의 형제)
 
                 x-p-g -> linear 
                     p에서 1회 rotate 후 색 재조정
@@ -134,7 +134,29 @@ delete | O(logN)  (최악 : 높이 h)| 3
 ### 2-3-4 트리 
 * 탐색트리(좌측은 작고, 우측은 크다) 이지만, 이진트리는 아님! 
 * 자식노드 개수 = 2, 3, 4
+* n-노드 : 자식노드가 n개인 노드
 * 모든 단말노드가 같은 Level에 존재
 
 * 각 노드의 칸 수 3개 (a,b,c)
+    - 2-노드 : a만 존재
+    - 3-노드 : a,b
+    - 4-노드 : a,b,c
 * 1번 자식 < a __|__ a < 2번 자식 < b  __|__ b < 3번 자식 < c __|__ c < 4번 자식 < d 
+* insert 는 항상 단말노드에 !
+* insert 할 단말노드가 꽉 찼다면, 단말노드로 가는 경로에 있는 4-노드를 2-노드 2개로 split 하면서 내려감!
+* split한 노드의 가운데 값을 부모노드로 올린다. ( 4-노드는 항상 꽉 차있고 , 4-노드가 아니라면 부모노드가 항상 자리가 있음)
+* 모두 split 했는데도 단말노드가 꽉 차있다면 단말노드를 split하고 가운데 값을 위로 올림
+
+
++ delete : 최악 : level별로 : O(logN)
+    - 루트 - 단말로 가는 경로 상 2-노드를 3 or 4-노드로 바꾸기 
+    1. 2-노드의 형제 중 3, 4 노드가 있는 경우 : 부모와 함께 rotate 느낌으로 !
+
+    2. 2=노드의 형제가 모두 2=노드인 경우 : 부모의 한쪽과 합쳐서 3-노드 만들기 (fusion)
+
+    3. 루트가 2-노드인 경우 : 새로운 루트가 자식 2개를 루트와 합쳐 만들어짐
+
+### Red-Black 트리와 2-3-4 트리 간 치환
++ 2-노드 : black 트리로 치환
++ 3-노드 : 2 Level에 걸쳐 큰 key부터 black-red 순으로
++ 4-노드 : 가운데 있는 key - black , 양쪽 key - red, 양쪽 자식 노드로 
