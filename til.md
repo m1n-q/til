@@ -170,7 +170,7 @@ delete | O(logN)  (최악 : 높이 h)| 3
 ```  
 
 ### Red-Black 트리와 2-3-4 트리 간 치환
-```md
+```markdown
 
 + 2-노드 : black 트리로 치환
 + 3-노드 : 2 Level에 걸쳐 큰 key부터 black-red 순으로
