@@ -10,21 +10,52 @@
 
 + 모양 : 마지막 레벨 제외 모두 두개의 자식
 + 성질 : 부모노드 > 자식노드 (최대힙)
++ list로 표현하기 : k번째 index의 left, right child == 2k+1 , 2k+2
 
 
+* heapify_down(k) : A[k]의 자식노드 A[2k+1], A[2k+2] 중 가장 큰 것이 A[k] 자리로 올라가고 A[k]는 밑으로 내려감 !
+                    pointer가 k번째 index에 있던 key를 따라간다. pointer, 즉 원래 A[k]의 key가 단말 노드에 도달하거나,
+                    자식 노드와 바꾸지 않을때(자식 노드들보다 클 때)까지 while 루프.
+                    O(logN)
+* make_heap : heap을 list로 표현했을 때 , 마지막 index부터 heap 성질을 만족 ( 부분 heap ) 하도록 heapify_down !
+              해당 부분이 heap 성질 만족하면, 앞의 index로 넘어감 ! 
+              O(NlogN) or O(N)
 
 
+* Insert : A.append() +
+           A.heapify_up(k) : heapify_down과 반대로, A[k]와 부모노드 A[(k-1)//2]중 큰 것이 올라가고, root에 도달하면 break
+           O(logN)
 
 
-### 이진 탐색 트리 (BST)
+* find_max() : return A[0] -> maxheap의 root 키 값 반환
+               O(1)
+
+* delete_max() : root (max값)과 마지막 Index (단말노드) 를 swap 후 단말로 옮겨진 max값을 pop  
+                 heapify_down(0)
+                 O(logN)
+
+
+* search는 효율적이지 않기에 지원 X
+
+```python
+* heap sort : for k in range(n) :
+            delete_max()
+
+  O(NlogN)
+```
+
+
+### 이진 탐색 트리 (BST) 
++ 이진트리를 Search 에 효율적으로 활용하기 위하여 정의
 
 
 + 정의 : 각 노드의 Left subtree 모든 key값은 노드의 key값보다 작아야 하고,  
         각 노드의 right subtree 모든 key값은 노드의 key값보다 커야한다.  
+
 +  _모든 노드에 대하여 위 조건이 만족하면, BST!_
 
 
-* BST의 순회 (모든 노드 출력하기)  
+* 이진트리의 순회 (모든 노드 출력하기)  
     
     - Preorder : M - L - R  
 
@@ -34,18 +65,50 @@
 
     - 위의 순서로 재귀적으로 순회 !
     
-* BST 탐색 및 삽입 
 
-    - find_loc(self,key) : 해당 key 노드를 찾거나, 없다면 들어갈 위치 반환
-        - self.root 부터 key 값을 비교하며 left , right 로 내려감!
-        - 반환 값을 이용하여 Insert !
+* BST Search 및 Insert 
+
+    + Search :  O(h) 의 탐색 시간 -> h를 작게 유지하기 위해 노력 !
+
+
+        - find_loc(self,key) : 해당 key 노드를 찾거나, 없다면 들어갈 위치 (key 값의 부모가 될 노드) return
+
+            - while v!= none // self.root 부터 key 값을 비교하며 key가 노드의 key보다 작다면 left, 크다면 right 로 내려감! 
+
+            - v의 parent p도 추적
+
+        
+
+        
+    + Insert : O(h) -> Search의 탐색시간 + 상수시간 
+        - if find_loc(key) 의 return != key    # key가 노드에 없음 
+        - v = node(key) , p=find_loc(key)     # p == none 일 경우 root
+        - v.parent = p , p.left(right) = v    # p와 v의 대소 비교
+        - self.size += 1  
+
+
+
+
+* BST의 삭제 : m을 찾는 과정 -> O(h)
+
+    + Delete by Merging(x)
+
+
+        - x를 삭제 후, x의 왼쪽 서브트리 L을 x자리로 올림 
+        - 항상 L's key < R's key 이므로, L의 가장 큰 노드 m의 오른쪽으로 R을 병합
+        - link 수정
+
+        1. L이 없는 경우 : R이 x자리 대체
+        2. x == root 인 경우 : root 값 수정
+
     
-* BST의 삭제
+    
+    + Delete by Copying(x) 
 
-    - Delete by Merging
 
-    - Delete by Copying  
-
+        - x 노드 자체를 삭제 하는 것이 아니라, L의 가장 큰 노드 m으로 key값만 수정
+        - x 자리에 L에서 가장 큰 m이 오면, BST의 조건 L < x < R 만족!
+        - 기존 m의 자식 노드들은 m의 부모의 오른쪽 자식이 됨! # m은 부모의 오른쪽 자식이었고, m의 자식들은 m의 부모보다 크다!
 
 
 
@@ -111,7 +174,7 @@
         
           
             
-            
+
   
 
 
@@ -232,3 +295,14 @@ delete | O(logN)  (최악 : 높이 h)| 3
 + 4-노드 : 가운데 있는 key - black , 양쪽 key - red, 양쪽 자식 노드로 
 
 
+
+
+### Union-Find 
+
++ height가 작은 쪽에서 큰 쪽으로 union
++ height가 같은 경우는 상관 없지만, union 후 height += 1
+
++ rank (height)가 1 증가할때 노드 수가 두배 증가한다 ???? 높이는 같지만 수평으로 노드가 많을 수도 있잖아!
++ 아 ! Nh는 최소개수 기준 일때 두배씩! Nh = 2^h (Nh = 전체 노드 n개, 높이 h인 경우 최소노드개수 )
++  h<=log2N
++ find , union -> O(h) = O(log2N)
