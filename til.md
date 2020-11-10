@@ -238,7 +238,7 @@
         x.color = red (기본)
 
     + 4가지 경우    -- 최대 2회 회전, 색 조정 : O(1) 
-        - 1. 처음 insert ( root )
+        1. 처음 insert ( root )
             x.color = black
 
 
@@ -248,29 +248,27 @@
             -> do nothing ( insert를 통해 단말에 삽입되었기 때문 : NiL == black )
 
 
-        3. x.parent.color == red
+        3. x.parent.color == red ,  x.uncle.color == red (부모의 형제)
             x의 부모가 red이므로, x의 형제는 black
+            x.grandparent.color == black 임!
+            x.grandparent.color = red 으로 조정
+            x.parent.color , x.uncle.color = black 으로 조정
+            grandparent 입장에서 (parent, uncle)에 black을 준 것.
+            경로상 black 의 수(height 아님)는 변하지 않음!
+            parent, uncle 입장에서는 공통적으로 증가한 경우이므로 상관없음  
 
-            3. 1.  x.uncle.color == red (부모의 형제)
-                x.grandparent.color == black 임!
-                x.grandparent.color = red 으로 조정
-                x.parent.color , x.uncle.color = black 으로 조정
-                grandparent 입장에서 (parent, uncle)에 black을 준 것.
-                경로상 black 의 수(height 아님)는 변하지 않음!
-                parent, uncle 입장에서는 공통적으로 증가한 경우이므로 상관없음  
-
-                 > grandparent의 부모가 red 라면...?!
+                > grandparent의 부모가 red 라면...?!
 
                     루트까지 올라가면 앞서 말한대로 루트의 color를 반전하면 되니 간단.물론 그것은 최악의 경우..그건 그렇다치고, 그렇다면 bh에 대한 위반은 없는지?? leaf 노드까지 내려갈 때 거치는 black노드 수는 바뀐것이 없으므로 위반사항이 없다.
                 
-            3. 2.  x.uncle.color == black (부모의 형제)
+        4. x.parent.color == red, x.uncle.color == black 
 
-                x-p-g -> linear 
-                    g 에서 1회 rotate 후 색 재조정
-                x-p-g -> triangle
-                    p에서 1회, g에서 1회 rotate 후 색 재조정
+            x-p-g -> linear 
+                g 에서 1회 rotate 후 색 재조정
+            x-p-g -> triangle
+                p에서 1회, g에서 1회 rotate 후 색 재조정
 
-                5번째 조건 -> 단말까지의 경로상의 bh가 같아야함 !
+            5번째 조건 -> 단말까지의 경로상의 bh가 같아야함 !
 
 AVL과 Red-Black 모두 search, insert, delete 모두 O(logn)
 
@@ -303,10 +301,11 @@ delete | O(logN)  (최악 : 높이 h)| 3
     - 2-노드 : a만 존재
     - 3-노드 : a,b
     - 4-노드 : a,b,c
-* 1번 자식 < a __|__ a < 2번 자식 < b  __|__ b < 3번 자식 < c __|__ c < 4번 자식 < d 
+* 1번 자식 < a  < 2번 자식 <  b < 3번 자식 < c < 4번 자식 < d 
 * insert 는 항상 단말노드에 !
 * insert 할 단말노드가 꽉 찼다면, 단말노드로 가는 경로에 있는 4-노드를 2-노드 2개로 split 하면서 내려감!
-* split한 노드의 가운데 값을 부모노드로 올린다. ( 4-노드는 항상 꽉 차있고 , 4-노드가 아니라면 부모노드가 항상 자리가 있음)
+* split한 노드의 가운데 값을 부모노드로 올린다. 
+  ( 부모노드는 항상 자리가 있다 ! split하지 않고 내려왔으므로, 4-노드가 아니고, a,b,c 가 다 있지 않다.)
 * 모두 split 했는데도 단말노드가 꽉 차있다면 단말노드를 split하고 가운데 값을 위로 올림
 
 
@@ -342,7 +341,7 @@ delete | O(logN)  (최악 : 높이 h)| 3
 + height가 같은 경우는 상관 없지만, union 후 height += 1
 
 + rank (height)가 1 증가할때 노드 수가 두배 증가한다 ???? 높이는 같지만 수평으로 노드가 많을 수도 있잖아!
-+ 아 ! Nh는 최소개수 기준 일때 두배씩! Nh = 2^h (Nh = 전체 노드 n개, 높이 h인 경우 최소노드개수 )
++ 아 ! Nh는 '최소개수' 기준 일때 두배씩! Nh = 2^h (Nh = 전체 노드 n개, 높이 h인 경우 최소노드개수 )
 +  h<=log2N
 + find , union -> O(h) = O(log2N)
 
