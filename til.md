@@ -1,9 +1,9 @@
 # __TIL__ 
 
-==============
+
 ## 2020.10.31  
 
-===============
+
 
 
 ### 힙 (heap)  
@@ -108,7 +108,7 @@
 
         - x 노드 자체를 삭제 하는 것이 아니라, L의 가장 큰 노드 m으로 key값만 수정
         - x 자리에 L에서 가장 큰 m이 오면, BST의 조건 L < x < R 만족!
-        - 기존 m의 자식 노드들은 m의 부모의 오른쪽 자식이 됨! # m은 부모의 오른쪽 자식이었고, m의 자식들은 m의 부모보다 크다!
+        - 기존 m의 자식 노드들은 m의 부모의 오른쪽 자식이 됨! #m의 자식들은 m이 m의 부모의 오른쪽 자식이었으므로 m의 부모보다 항상 크다!
 
 
 
@@ -119,18 +119,26 @@
 
 
 
-### 균형이진탐색트리
+### 균형이진탐색트리 (Balanced BST)
 
 
-+ 정의 : 높이 h를 O(logn)수준으로 유지하는 이진탐색트리 !
++ 정의 : 높이 h를 O(logN) 수준으로 유지하도록 조정하는 이진탐색트리를 고안 !
 
-+ 회전
++ 회전 : 조정연산 - 높이
     - Rotate right , left (self,z)
-        6개의 링크 수정 !
+
+    - z의 왼쪽 서브트리 높이가 더 큰 경우 : right rotation으로 왼쪽 서브트리의 레벨을 끌어 올림! == 전체트리 레벨 끌어올림
+
+
+    - A < x < B < z < C
+    
+    - 6개의 링크 수정 !
   
-
-
-
++ 종류
+    - AVL  
+    - Red-Black
+    - 2-3-4
+    - Splay 
 
 
 
@@ -143,33 +151,55 @@
 ### AVL    
 
 
-+ 정의 : 모든 노드에서 1이하의 height 차이 유지 
++ 정의 : 모든 노드에서 각 노드의 Left, Right 서브트리 height 차이가 1 이하인 BST
++ class Node 동일, height라는 멤버 변수 추가
++ class AVL(BST)    # 상속 , Insert 등에서 height 업데이트 필요.
 
-+ AVL 삽입
-    node에 height 인스턴스변수 필요
-    삽인된 v 로부터  부모노드 따라올라가기
-    처음으로 높이 차 나는 부모노드 - z
-    Z y x <-  v에서 z로 가는 경로상 노드
-    Rebalcance (xyz)  < - 원래 z 자리 리턴
 
-    xyz가 1자일경우 1회 로테이트
-    삼각형일경우 2회 로테이트( y에서  1회 , z에서 1회)
+* Insert : 일단 삽입은 똑같이 하나, 높이차가 AVL 조건에 어긋날 때만 추가 조정!  
 
-+ Avl 삭제 (부모노드의 밸런스도 깰 수 있음!)
-    Dbm or dbc 불러옴 ( 처음 균형이 깨질’수도’ 있는 노드 반환)
+    - def insert(self,key) :  
+        v = super(AVL,self).insert(key)  
+          
 
-    (가장 처음 균형이꺠진 노드 z)
+        #class BST의 insert 호출 
+   
+    - 삽입된 v 로부터 부모노드 따라 올라가기
+      처음으로 높이 차 나는 부모노드 == z
+      z, y, x == v에서 z로 가는 경로상의 노드
+      
+        - Rebalcance (x,y,z) : < - 원래 z 자리에 온 key를 return   # root 값이 바뀐 경우 고려하기 위함
 
-    균형 깨진 z로부터 높이가 무거운쪽으로 내려가면서 z,y,x 
+         x, y, z가 linear : 1회, rotate(z)
+         x, y, z가 triangle : 2회, rotate(y) , rotate(z) 
 
-    무거운쪽에서 가벼운쪽으로 나눠주기 
-    Z 로테이트…
 
-    원래 z자리의 부모 w에서 균형이 깨진다면 ?!
 
-    — 루트노드까지 올라가는 높이 h 번의 로테이트 될수도 !
+* Delete : (부모노드의 밸런스도 깰 수 있음!)
+    - DBM or DBC 불러옴    
+    - delete(self,u) :
+        v = super(AVL,self).DeleteByCopying(u)  
 
-    While v!=none (루트)  
+        \# u를 지워서 가장 처음 균형이 깨질’수도’ 있는, 가장 깊은 곳의 노드 v return 해야 함!
+        \# v의 부모에서 균형이 깨지는지 , root 까지 관찰
+        \# root 가 바뀔 경우에 대비하여, v pointer가 올라가며 자식인 w 기록 
+            -> v == none ~ self.root = w
+
+      z == 삭제된 곳에서 올라가며 가장 처음 균형이 꺠진 노드 
+
+      z, y, x ==  z로부터 높이가 __무거운 쪽__ 으로 내려가며 y, x 지정
+
+    - Rebalnce(z,y,x) :
+         1회 or 2회 rotate
+         무거운 쪽에서 가벼운 쪽으로 나눠주기 
+
+
+      ### __원래 z자리의 부모 w에서 균형이 깨진다면 ?!__
+        - z에서 깨진 균형을 맞추다 보면 그 위의 부모에 영향을 미쳐 높이차가 발생할 수 있음!
+        - 계속 부모노드로 올라가며 균형을 맞춘다 !
+        - 루트노드까지 모든 level에서, 높이 h 번 로테이트 해야할 수도 있다 !  #  O(logN)번 * O(1)
+
+        - While v!=none   # 루트까지
       
         
           
@@ -192,41 +222,53 @@
 
 ### Red - Black 트리
 
-+ 정의 :
++ None 값의 단말노드 / 내부노드
++ 조건 
+    1.  모든 노드는 Red / Black
+    2.  root 노드 == Black
+    3.  단말노드(NIL) == Black
+    4.  Red 노드의 자식노드 == Black    # Black 노드의 자식은 상관없음
+    5.  각 노드에서 단말노드로 가는 경로상 Black 노드의 수는 항상 같아야 함
 
 
-+ 삽입
-    + BST의 insert 연산 호출 :O(logn)
+* Insert 
+
+    + BST의 insert 연산 호출 : O(logn)
 
         x.color = red (기본)
+
     + 4가지 경우    -- 최대 2회 회전, 색 조정 : O(1) 
-        - 처음 insert
+        1. 처음 insert ( root )
             x.color = black
 
 
-        - x.parent.color == black
+        2. x.parent.color == black
+            
             부모가 black, 단말은 항상 black 
-            -> do nothing
+            -> do nothing ( insert를 통해 단말에 삽입되었기 때문 : NiL == black )
 
 
-        - x.parent.color == red
+        3. x.parent.color == red
             x의 부모가 red이므로, x의 형제는 black
 
-            - x.uncle.color == red (부모의 형제)
+            3. 1.  x.uncle.color == red (부모의 형제)
                 x.grandparent.color == black 임!
                 x.grandparent.color = red 으로 조정
                 x.parent.color , x.uncle.color = black 으로 조정
                 grandparent 입장에서 (parent, uncle)에 black을 준 것.
                 경로상 black 의 수(height 아님)는 변하지 않음!
-                parent, uncle 입장에서는 공통적으로 증가한 경우이므로 상관없음   
+                parent, uncle 입장에서는 공통적으로 증가한 경우이므로 상관없음  
 
+                 > grandparent의 부모가 red 라면...?!
+
+                    루트까지 올라가면 앞서 말한대로 루트의 color를 반전하면 되니 간단.물론 그것은 최악의 경우..그건 그렇다치고, 그렇다면 bh에 대한 위반은 없는지?? leaf 노드까지 내려갈 때 거치는 black노드 수는 바뀐것이 없으므로 위반사항이 없다.
                 
-            - x.uncle.color == black (부모의 형제)
+            3. 2.  x.uncle.color == black (부모의 형제)
 
                 x-p-g -> linear 
-                    p에서 1회 rotate 후 색 재조정
+                    g 에서 1회 rotate 후 색 재조정
                 x-p-g -> triangle
-                    x에서부터 1회, p에서 1회 rotate 후 색 재조정
+                    p에서 1회, g에서 1회 rotate 후 색 재조정
 
                 5번째 조건 -> 단말까지의 경로상의 bh가 같아야함 !
 
@@ -238,7 +280,7 @@ search | - | -
 insert | 2 | 2 
 delete | O(logN)  (최악 : 높이 h)| 3 
 
--> 시간은 logN으로 같지만 회전수가 적다!
+-> 수행시간은 logN으로 같지만 회전수가 적다!
 
 
 
