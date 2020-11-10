@@ -238,7 +238,7 @@
         x.color = red (기본)
 
     + 4가지 경우    -- 최대 2회 회전, 색 조정 : O(1) 
-        1. 처음 insert ( root )
+        - 1. 처음 insert ( root )
             x.color = black
 
 
