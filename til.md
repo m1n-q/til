@@ -349,6 +349,207 @@ delete | O(logN)  (최악 : 높이 h)| 3
 
 
 
-## 2020.11.04
+## 2020.11.11
+
+### 파이썬 요약 강의
++ print( sep=' ' ) 
++ False : '', 0 , None 
++ True : 값이 있는 모든 것 
++ and = * , or = +
++ 비트 연산자 : & , | , ~ 
++ 이진법으로 변환 후 & => * , | => + 연산
 
 
+* def function(x) :  x => parameter
+* function(4) : 4 => argument
+
+```python
+a=10 
+def function() : 
+    a+=10 
+    return a      # 에러가 뜬다 , 왜 ? a는 함수 내의 지역변수로, 선언되어 있지 않기 때문 !
+def function2() :
+    global a
+    a+=10
+    return a      # 함수 밖의 전역변수 a를 가져와서, 20을 올바르게 return하게 된다 !
+```
+
++ 리스트 , 튜플은 순서가 있는 자료형 !
++ 셋 , 딕셔너리는 순서가 없는 자료형 !
+
+
+```python
+a = 1
+while True :
+    print('while 루프')
+    a+=1
+    if a>10 :
+        break 
+else :
+    print('정상종료')  # while문이 break에 의해 종료되어 출력되지 않음 ! 
+
+a = 1
+while a<10 :
+    print('while 루프')
+    a+=1
+else :
+    print('정상종료') # while문의 조건에 의해 정상종료되었으므로, else 문 출력 !
+
+#for 문에도 break 와 else ( 정상종료 ) 사용 가능
+```
+```python
+s= {1,2,3}
+d= {'one':1, 'two':2}     # 순서가 없는 자료형
+
+for i in s :
+    print(i)    # 순서는 없으나, 순회는 가능 !
+for i in d :
+    print(d)    # key만 순회한다 !
+
+```
+
+
+```python
+# 언패킹 
+l = [(1,10) , (2,20) , (3,30)]
+for i in l :
+    print(i)
+for i , j in l  :
+    print(i,j)
+```
+* continue : 다음 순회로 넘어가기
+* pass : 아무 기능도 하지 않는다 !
+* enumerate(x, n) : n - 시작숫자
+
+### Numpy
+
+```python
+
+import numpy as np
+
+data = [[1,2,3],[4,5,6],[7,8,9]]
+a = np.array(data) 
+a   # ndarray ~ 행렬의 형태 !
+a.dtype
+a.astype('float32') #형변환
+a.dtype
+
+np.arange(1,10).reshape(3,3)   #arange : range와 같음. reshape(A,B) : A x B 행렬로 생성 / 앞의 데이터와 사이즈 같아야함!
+
+np.nan # 평균 등의 계산에서 자동 제외 ! / float형에서 사용 가능
+
+b = np.linspace(1,10,20)  # (초기값, 종료값, 생성개수)
+
+```
+
+### Numpy 연산
+
+```python
+data = np.arange(1,10).reshape(3,3)
+data + data # lis의 + 연신처럼 연결이 아닌 , 각 원소끼리의 사칙연산 
+np.dot(data,data) # 행렬의 곱연산 
+data@data #상동
+```
+### Numpy 차원
+차원수 == 대괄호의 갯수
+
+```python
+#0차원 : 스칼라값
+
+a = np.array(1)
+a
+a.shape
+a.ndim #차원 반환
+
+#1차원 : 벡터
+
+a = np.array([1])
+a
+a.shape
+a.ndim #차원 반환
+
+a = np.array([1,2,3,4,5])
+a
+a.shape 
+a.ndim #차원 반환
+
+#2차원 : 매트릭스 (행렬)
+a = np.array([[1,2,3],[4,5,6]])
+a
+a.shape # 행과 열의 수
+a.ndim #차원 반환
+
+#3차원 : 3차원 이상의 다차원 행렬 = Tensor
+a = np.array([[[1,2],[3,4],[5,6]],[[7,8],[9,10],[11,12]]])
+```
+
+```python
+a = np.ones(12)
+b = np.zeros(12)
+c = np.eye(3) # n by n 의 단위행렬
+
+d = a.reshape(2,3)
+e = np.ones([2,3]) #이렇게 바로 만들수도 있음
+
+f = np.empty([2,3]) #0에 가까운, 값이 있는 값!
+g = np.full((2,3), 1000) #
+
+h = np.linspace(2, 10, 6) #2부터 10까지 6개를 동등한 간격으로 !
+```
+### Numpy 집계함수
+```python
+a= np.arange(10).reshape(2,5)
+a[0][0] 
+a[0,0]
+np.mean(a)
+np.median(a)
+np.std(a)
+np.var(a)
+
+np.sum(a) # 모든 원소의 합
+
+sum(a) # column 별 합
+np.sum(a, axis=0) # column 별 합
+np.sum(a, axis=1) # row 별 합
+```
+
+
+### Pandas
+
++ 
+```python 
+import pandas as pd
+import numpy as np
+
+data = np.arange(0, 50, 10)
+
+a = pd.Series(data, index=['a','b','c','d','e']) # a, b, c, d, e
+
+a['b'] 
+a.loc['b']  # 인덱스 이름 : 명시적 인덱스
+a.iloc[1] #순서 : 암시적 인덱스
+```
++ Dataframe 
+```python 
+rawdata = np.random.randint(50,100,size=(4,3))
+df = pd.DataFrame(rawdata,index=['1반','2반','1반','2반'],columns=['국','영','수'])
+df['국'] # columns 값 먼저 ! df[열][행]
+#df[0] -> Error
+df.dropna(axis = 0 , inplace= True) # inplace : 원본 수정!
+```
+
+### Dataframe Indexing
+
+```python
+df.T # row와 column 을 바꿔준다 !
+
+df.index = [['1학년','1학년','2학년','2학년'],['1반','2반','1반','2반']] #2차월 행렬을 통해 MultiIndexing
+```
+
+```python  
+
+a = pd.DataFrame(np.arange(1,10.reshape(3,3)))
+b = pd.Series(np.arange(10,40,10))
+pd.concat([a,b], axis =1 ,ignore_index= True)  # a에 b를 옆으로 (열로 ) 연결, ignore_index : b의 기존 인덱스 무시
+a.append(b) # a에 b를 밑으로 연결 
+```
