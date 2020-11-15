@@ -553,3 +553,139 @@ b = pd.Series(np.arange(10,40,10))
 pd.concat([a,b], axis =1 ,ignore_index= True)  # a에 b를 옆으로 (열로 ) 연결, ignore_index : b의 기존 인덱스 무시
 a.append(b) # a에 b를 밑으로 연결 
 ```
+
+## 2020.11.15
+
+### Matplotlib 
+
+```python 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+%matplotlib inline
+
+x = [100,200,300]
+y = [1,2,3]
+
+value = pd.Series(y,x) #y 값 먼저 !
+
+plt.plot(x,y)
+plt.plot(value)
+plt.plot(value, '--') # ':' , '--r', '--o' 점선, 색상, 동그라미
+plt.plot(value, color='red') #ff0000 과 같이 16진법 RGB로 표현 가능
+plt.plot(value, linewidth= 10)
+plt.title('hello world', fontsize=20)
+plt.xlabel('hello', fontsize=20)
+plt.ylabel('world', fontsize=20)
+plt.savefig('sample.png')
+
+x=np.linspace(0,10,100)
+y=np.sin(x)
+y_=np.cos(x)
+
+plt.plot(x,y, label = 'sin' )
+plt.plot(x,y_,'-o', label = 'cos' )  #legend 가 있어야 label 출력됨
+
+plt.legend(loc=4) #loc로 legend의 위치 조정
+```
+
+### Matplotlib_Scatter
+
+```python 
+x = np.linspace(0,10,20)
+y = x**2
+plt.scatter(x,y, c ='r' , alpha = 0.5) #c==color , alpha = ?(색상관련)
+plt.show()
+```
+
+### Matplotlib_Histogram
+
+```python 
+x = [np.random.randint(1,7) for i in range(1000)]
+plt.hist(x,bins=6) # bins = 칸수 조정
+plt.show
+```
+
+### Matplotlib_Piechart
+
+```python 
+labels = ['one','two','three' ]
+size = [100,20,30]
+plt.pie(size,labels=labels, autopct = '%1.2f%%')
+```
+### Matplotlib_Barchart
+
+```python 
+
+plt.bar(['one','two','three'],[10,20,30])
+plt.barh(['one','two','three'],[10,20,30])
+```
+
+### Plotly
+
+[Plotly 튜토리얼 공식 문서](https://plotly.com/python/)
+```python
+import plotly.express as px
+import plotly.graph_object as go
+x = [1,2,3,4,5]
+y = x**2
+fig = px.line(x=x,y=y)
+fig.show()
+
+korea_life = px.data.gapminder().query("country == 'Korea, Rep.'")
+fig = px.line(korea_life, x = "year", y="lifeExp", title='Life expectancy in Korea')
+fig.show()
+
+
+korea_GDP = px.data.gapminder().query("country == 'Korea, Rep.'")
+fig = px.bar(korea_GDP, x = "year", y="gdpPercap", title='한국인 GDP')
+fig.show()
+
+
+korea_GDP = px.data.gapminder().query("country == 'Korea, Rep.'")
+fig = px.scatter(korea_GDP, x = "year", y="gdpPercap", title='한국인 GDP')
+fig.show()
+
+
+fig = px.pie(values = [20, 30, 50])
+fig.show()
+
+
+```
+
+### 이미지 분석
+```python 
+import numpy as np
+from skimage import io
+# from PIL import Image
+# from cv2
+import matplotlib.pyplot as plt
+jeju = io.imread('jeju.jpg')
+type(jeju)
+jeju.shape
+jeju
+np.min(jeju), np.max(jeju)
+plt.imshow(jeju)
+plt.imshow(jeju[::-1]) #상하좌우반전      [strat, stop, step]
+plt.imshow(jeju[:, ::-1]) #좌우반전
+plt.imshow(jeju[::-1,:]) #상하반전
+
+plt.imshow(jeju[500:800,:])
+plt.imshow(jeju[500:800,500:730]) # 말 이미지만 슬라이싱
+
+plt.imshow(jeju[::3,::3]) #3칸씩 건너 뛰기
+minijeju = jeju[::3,::3]
+
+plt.hist(minijeju.ravel(),256,[0,256]) # minijeju의 색의 분포
+plt.show
+
+minijeju_ = np.where(minijeju < 50, minijeju , 0) #minijeju 에서 , 50 이하의 값은 minijeju, 그렇지 않은 값 = 0
+plt.imshow(minijeju_)
+
+plt.imshow(jeju[:,:,1])
+
+from skimage import color
+
+plt.imshow(color.rgb2gray(jeju),cmap=plt.cm.gray)
+```
