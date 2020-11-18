@@ -689,3 +689,80 @@ from skimage import color
 
 plt.imshow(color.rgb2gray(jeju),cmap=plt.cm.gray)
 ```
+
+
+## 2020.11.17
+
+### 객체, 복사
+```python
+
+NEW = SLL()
+print('NEW = ', id(NEW))
+print('NEW.head = ', id(NEW.head))
+x =Node(0)
+print('x (Node) = ', id(x))
+print('None =', id(None))
+
+NEW.head = x 
+print('NEW.head = ', id(NEW.head))
+print('x (Node) = ', id(x))
+
+x = Node(1)
+print('NEW.head = ', NEW.head, id(NEW.head))
+print('x (Node) = ', id(x))
+
+## 인스턴스 변수가 가르키던 변수 x의 값이 변해도, 기존 인스턴스 변수에 배정된 주소 (바뀌기 전 x) 유지 ! x가 가르키는 주소만 바뀜 !
+## 위의 예시에서 인스턴스 변수는 고유한 주소가 아니라 , 초기에 빈 공간 None을 가지며, 
+## x가 배정된 뒤에야 x가 가르키는 주소를 가르킴
+
+a= 1
+b=a
+print(id(a))
+print(id(b))
+a=2
+
+
+print(a)
+print(b)
+
+print(id(a))
+print(id(b))
+
+## a의 주소가 1이라는 객체의 주소를 버리고, 2라는 새로운 객체의 주소를 가르키게 되는 것!
+## 따라서, b = a 였다고 해서 b가 가르키는 객체가 변하거나 하지 않음.
+## b는 그대로 1을 가르키고, a의 주소만 이동
+
+
+a= [1,2,3]
+b=a
+print(id(a))
+print(id(b))
+a=[4,5,6]
+
+
+print(a)
+print(b)
+
+print(id(a))
+print(id(b))
+
+
+## 이 경우에도 위와 같으나 ,
+
+a= [1,2,3]
+b=a
+print(id(a))
+print(id(b))
+a[0] = 10
+
+
+print(a)
+print(b)
+
+print(id(a))
+print(id(b))
+
+## 이처럼 a가 가르키는 주소가 바뀌는 것이 아니라, 여전히 a와 b는 같은 주소를 가르키고 있고,
+## 해당 주소의 객체 자체가 변하는 경우,
+## a에서 객체에 변화를 준 것이 b 에서도 나타나게 됨!
+```
