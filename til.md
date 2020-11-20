@@ -766,3 +766,130 @@ print(id(b))
 ## 해당 주소의 객체 자체가 변하는 경우,
 ## a에서 객체에 변화를 준 것이 b 에서도 나타나게 됨!
 ```
+
+## 2020.11.19
+
+### Iterator, Generator, yield
+
++ iterator : 한 번에 하나씩 그 객체의 elements에 순서대로 액세스 할 수 있는 객체
+
+    + 'iterable' 한 객체가 iter() 함수를 통하여 'iterator 객체'로 생성됨
+    + iter(iterable) -> iterator
+
+    - iter() , next() 지원
+    + iter(f) 가 정의된 f.__iter__() 메소드를 호출 : next 메소드를 가지는 iterator 객체를 반환
+    + next(f) 가 정의된 f.__next__() 메소드를 호출 : 반복자를 입력받아 다음 요소 반환
+    
++ generator 는 iterator의 특수한 형태 
+    + generator : yield 를 통하여 next가 호출될 때 마다 다음 값 반환 
+    + yield 명령어로 iterator를 만드는 함수
+
++ return : 값을 함수 외부로 전달하고, 함수를 종료
++ yield : 값만 함수 외부로 전달하고, 함수를 종료하지 않음 (함수의 일시정지)
+    + 다음 next()가 호출될 때까지 대기 ?
+
+
+
+
+
+
++ for문은 순회하기위해 제일먼저 __iter__() 메서드를 호출한다. 
++ 그리고 for문이 반복할때마다 __next__() 메서드를 호출하여 다음 값으로 넘어간다. 
++ 생성자에서 i 변수를 만들고, __iter__메서드에서는 self를 return 한다. 그리고 __next__ 메서드에서 i를 +1씩 증가 시킨다. 
+
+
+
+
++ 제네레이터도 이터레이터랑 기능은 동일하다. 하지만 이터레이터보다 좀더 간편하게 기능을 구성할 수 있다. 
++ 제네레이터는 에터레이터처럼 __iter__ 나 __next__를 구현할 필요가 없다. 다만 함수안에 yield문을 사용하여 값을 반환하면된다.
+
+
+
+```python
+class It :
+    def __init__(self) :
+        self.i = 0
+    def __iter__(self) :    # iterable한 객체 정의 
+        return self         # self를 return 함으로써 이터레이터로 구현.
+    def __next__(self) :    # iterator는 next( f )를 통해 f.__next__() 호출하여 다음 요소 불러옴.
+        if self.i == 5 :
+            raise StopIteration
+        else :
+            self.i += 1
+            return self.i
+
+k = It()
+
+
+for i in k :
+    print(i)
+## for문에서 Iter() 메소드를 자동으로 불러와, iterator 생성, next() 호출
+
+a = iter(k)     # iter객체를 생성하지 않으면 next 호출이 안되네
+print(next(a))
+print(next(a))
+print(next(a))
+print(next(a))
+print(next(a))
+
+
+
+
+
+class Gn :
+    def __init__(self) :
+        self.i = 0
+    def gene(self) :
+        while self.i < 5 :
+            self.i +=1
+            yield self.i
+g=Gn()
+
+for i in g.gene() : # gene() 메소드로 generator 생성, for 문에서 순회 가능한 객체! next() 필요 없이 generator 자체적으로 순회중
+    print(i)
+
+for i in g :    # Gn 클래스 자체가 Iterable 하지는 않음! gene 메소드를 통하여 generator를 생성하는 것이기 때문!
+    print(i) 
+
+
+
+
+class Gn2 :
+    def __init__(self) :
+        self.i = 0
+    def __iter__(self) :    # generator를 생성하는 메소드를, __iter__로 정의해줌 !
+        while self.i < 5 :
+            self.i +=1
+            yield self.i
+g2=Gn2()
+for i in g2 :   #   for문은 해당 클래스의 __iter__ 메소드를 불러온 후 순회하는 구조 ! generator를 __iter__ 메소드 안에 구현해줬기 때문에, 
+    print(i)    #   generator를 별도롤 불러오지 않아도 객체에서 자동으로 !
+```
+
+
+
+>>> list와 set 같은 집합에 대한 iterator는 이미 모든 값들을 저장해 둔 상태이지만, generator는 모든 값들을 갖지 않은 상태(미정)에서 yield에 의해 하나씩만 데이터를 만들어 가져온다는 차이점이 있다.
+
+
+
+
+iter는 반복을 끝낼 값을 지정하면 특정 값이 나올 때 반복을 끝냅니다. 이 경우에는 반복 가능한 객체 대신 호출 가능한 객체(callable)를 넣어줍니다. 참고로 반복을 끝낼 값은 sentinel이라고 부르는데 감시병이라는 뜻입니다. 즉, 반복을 감시하다가 특정 값이 나오면 반복을 끝낸다고 해서 sentinel입니다.
+
++ iter(호출가능한객체, 반복을끝낼값)
+예를 들어 random.randint(0, 5)와 같이 0부터 5까지 무작위로 숫자를 생성할 때 2가 나오면 반복을 끝내도록 만들 수 있습니다. 이때 호출 가능한 객체를 넣어야 하므로 매개변수가 없는 함수 또는 람다 표현식으로 만들어줍니다.
+>>> import random
+>>> it = iter(lambda : random.randint(0, 5), 2)
+>>> next(it)
+0
+>>> next(it)
+3
+>>> next(it)
+1
+>>> next(it)
+Traceback (most recent call last):
+  File "<pyshell#37>", line 1, in <module>
+    next(it)
+StopIteration
+
+
+
