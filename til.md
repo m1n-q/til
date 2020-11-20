@@ -922,9 +922,10 @@ StopIteration
         - C-Universial hash function을 이용하면, 연결리스트 길이가 O(1) 수준 유지 가능 
 
 
-Open Addressing - linear probing
+
+#### Open Addressing - linear probing
 _____
-### pseudo code
+#### pseudo code
 ```python
 
 ### remove ###
@@ -961,7 +962,7 @@ while True :
 
 
 
-### 구현
+#### 구현
 ```python
 class Node :
     def __init__(self,key) :
