@@ -75,8 +75,8 @@
 + 이진트리를 Search 에 효율적으로 활용하기 위하여 정의
 
 
-+ 정의 : 각 노드의 Left subtree 모든 key값은 노드의 key값보다 작아야 하고,  
-        각 노드의 right subtree 모든 key값은 노드의 key값보다 커야한다.  
++ 정의 : 각 노드의 __Left subtree__ 모든 key값은 노드의 key값보다 작아야 하고,  
+        각 노드의 __right subtree__ 모든 key값은 노드의 key값보다 커야한다.  
 
 +  _모든 노드에 대하여 위 조건이 만족하면, BST!_
 
