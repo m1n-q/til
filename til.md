@@ -13,13 +13,39 @@
 + list로 표현하기 : k번째 index의 left, right child == 2k+1 , 2k+2
 
 
-* heapify_down(k) : A[k]의 자식노드 A[2k+1], A[2k+2] 중 가장 큰 것이 A[k] 자리로 올라가고 A[k]는 밑으로 내려감 !
-                    pointer가 k번째 index에 있던 key를 따라간다. pointer, 즉 원래 A[k]의 key가 단말 노드에 도달하거나,
-                    자식 노드와 바꾸지 않을때(자식 노드들보다 클 때)까지 while 루프.
+* heapify_down(k) : A[k]의 자식노드 A[2k+1], A[2k+2] 중 가장 큰 것이 A[k] 자리로 올라가고 A[k]는 밑으로 내려감 !  
+
+                    pointer가 k번째 index에 있던 key를 따라간다.   
+                    pointer, 즉 원래 A[k]의 key가 단말 노드에 도달하거나,
+                    자식 노드와 바꾸지 않을때(자식 노드들보다 클 때)까지 while 루프.  
+                      
+                      
+                    
+                    즉, k 자리에서 부분 heap을 만들고 k를 밑으로 내려보냄, 또 그 새로운 k 자리에서 heap 조건 맞추며 단말까지!
+
+
+
+                    근데 만약 A[k]와 두 child는 작은 heap을 만족하는데,  
+                    child와 child의 자식들이 heap을 만족하지 않는다면?  
+                    while문의 조건에 의하면 A[k]와 두 child 중 A[k]값이 가장 크면 더 내려가지 않는데 ?
+
+                    -> make_heap 연산에서 마지막 인덱스부터 heapify_down을 하므로,  
+                       위와 같은 상황이 올 수 없음 ! 이미 밑에 것부터 작은 삼각형을 만들며 올라왔기 때문!  
+                       따라서 make_heap에서는 윗 레벨이 작은 heap을 만족하여  
+                       밑 레벨을 체크해주지 못하는 경우가 없음!               
+
+
+                    -> 위쪽 레벨의 노드가 내려오며 밑에서 만들어진 삼각형을 망가뜨리는 경우에는 또  
+                       while문의 내용처럼 k 인덱스가 내려가며 재조정 해줌!  
+                            
+    
                     O(logN)
+
+
 * make_heap : heap을 list로 표현했을 때 , 마지막 index부터 heap 성질을 만족 ( 부분 heap ) 하도록 heapify_down !
-              해당 부분이 heap 성질 만족하면, 앞의 index로 넘어감 ! 
-              O(NlogN) or O(N)
+              해당 부분이 heap 성질 만족하면, 앞의 index로 넘어감 !  
+                
+                O(NlogN) or O(N)
 
 
 * Insert : A.append() +
