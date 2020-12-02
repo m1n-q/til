@@ -823,10 +823,11 @@ func(st)
     + generator : yield 를 통하여 next가 호출될 때 마다 다음 값 반환 
     + yield 명령어로 iterator를 만드는 함수
 
+
 + return : 값을 함수 외부로 전달하고, 함수를 종료
 + yield : 값만 함수 외부로 전달하고, 함수를 종료하지 않음 (함수의 일시정지)
     + 다음 next()가 호출될 때까지 대기 ?  
-      
+    + 값을 미리 만들어두지 않고, next가 호출될 때만 불러오기 때문에 메모리 효율 UP      
        
 _____
 
@@ -1394,7 +1395,8 @@ ref = show # show 함수 객체를 ref 도 참조하게 한다.
 ref('hello') 
 
 ```
->>> 함수도 객체임을 알 수 있다
+>>> 함수도 객체임을 알 수 있다  
+
 >>> 그렇다면 함수에 이름이 필요한 이유 ? 함수 객체를 참조하고 호출하기 위한 변수명일 뿐 !
 
 ```python 
@@ -1478,3 +1480,164 @@ filter(lambda n : not(n % 3), range(1,11) )     # n%3 == 0 (False) 인 값만 �
 filter(lambda n : not(n % 3), map(lambda x : x ** 2, range(1,11)))
 # 1~10 의 제곱수 중, 3의 배수만 담은 iterator
 ```
+
+## 2020.12.02
+
+### 제너레이터 표현식
+
++ 리스트 컴프리헨션과 같은 용법 
+    - (n ** 2 for n in range(1,11))
+    - [] 대신 () 을 사용하면 제너레이터 객체가 생성됨 !
+
+```python
+class Gn :
+    
+    def __iter__(self) :    # generator를 생성하는 메소드를, __iter__로 정의해줌 !
+        for i in range(5) :
+            yield i
+g=Gn()
+
+for i in g :   #   for문은 해당 클래스의 __iter__ 메소드를 불러온 후 순회하는 구조 ! generator를 __iter__ 메소드 안에 구현해줬기 때문에, 
+    print(i)    #   generator를 별도롤 불러오지 않아도 객체에서 자동으로 !
+
+
+class Gn2 :
+  
+    def __iter__(self) :    # generator를 생성하는 메소드를, __iter__로 정의해줌 !
+        return (i for i in range(5))
+
+g2 = Gn(2)
+
+for i in g2 :
+    print(i)
+```
+
++ 제너레이터 표현식을 인자로 전달 
+```python
+def show(x) :
+    for i in x :
+        print(i)
+
+g = (i*2 for i in range(5))
+show(g)                         # 이렇게 변수명으로 전달할 수 있지만
+show((i*2 for i in range(5)))   # 직접 인자로 넣을 수도 있음.
+show(i*2 for i in range(5)      # 이 경우, 표현식의 () 를 생략해도 되도록 약속!
+```
+
+### 튜풀 패킹 & 언패킹 
++ 튜플 패킹 
+    - '__*__' 사용하여 패킹(묶어준다.)
+    - def func(*args) : 여기서 의미하는 * 도 묶음의 의미 !
+    - 입력받은 인자가 여러개일 경우 튜플로 묶어서 전달하라는 뜻
+```python 
+nums = 1,2,3,4,5     # 변수의 수가 맞지 않아 패킹됨 
+>>> nums
+(1,2,3,4,5)          # 리스트의 경우에도 적용 가능 !
+
+first, *others, last = nums 
+
+>>> first
+1
+>>> others 
+[2,3,4]              # * 를 통한 패킹 - 리스트로 묶임
+>>> last
+5
+
+
+def func(n1,n2,*others) :     # 세번째 이후 값들은 튜플로 묶여서 other 자리에 전달됨
+    print(type(others))
+    print(n1,n2,others,sep='\n')
+
+>>>func(1,2,3,4,5)
+1
+2
+(3,4,5)                       # 이 경우는 리스트 아니고 튜플 ? 
+```
+
+     
+
++ 튜플 언패킹 
+    -  '__*__' 가 예외적으로, __함수 호출 시__ ( 정의 x ) 언패킹 용도로 사용됨. 
+    - 변수의 형태 및 수와, 튜플 값의 형태 및 수가 일치할 때 자동 언패킹된다.
+```python
+def func(name,age,h) :
+   
+    print(name,age,h,sep='\n')
+
+
+p = ('yoon',13,171)
+
+>>>func(p)
+TypeError: func() missing 2 required positional arguments: 'age' and 'h'
+# p가 하나의 튜플로 묶여있으니, name 매개변수에만 전달된 상황
+
+>>>func(*p)         # '*' 을 통해 튜플을 언패킹하여 인자로 전달
+yoon
+13
+171 
+# 3개의 값으로 언패킹되어 각각 전달되는 것을 확인할 수 있다.
+```
+```python
+p = ('john', (172,68),'usa')
+>>> name,height,weight,country = p 
+ValueError: not enough values to unpack (expected 4, got 3) # 형태가 일치하지 않기 때문.
+
+>>> name,(height,weight),country = p  # 형태와 수를 완전히 일치시킴.
+>>> print(height,country)
+172 usa
+# 튜플 내의 튜플도 위와 같은 형태로 언패킹
+```
+### Dict 의 View 객체
+
++ keys(), values(), items() : 딕셔너리의 __'현재 상태'__ 를 바라보는 View 객체를 생성함
+    - view 객체가 생성된 시점이 아닌, view 객체의 iterator가 호출된 시점의 딕셔너리를 참조함 !
+```python 
+d= dict(a = 1, b = 2, c = 3)
+view = dict.items()             # view 객체 생성
+
+for i in view :                 # iterator 호출
+    print(i)
+
+d['a'] += 10
+d['b'] += 20
+
+for i in view :                 # iterator 호출
+    print(i)
+
+                                # view 객체를 새로 생성하지 않아도
+                                # iterator 호출 시점에서의 dict 값 반영!
+```
+
++ dict 컴프리헨선
+```python
+ks = ['a','b','c']
+vs = [1,2,3]
+d = {k : v for k,v in zip(ks,vs)}
+
+>>> d
+{'a': 1, 'b': 2, 'c': 3}
+```
+
+
+
+### *args , **kargs 
+
++ 기본적으로 __'*'__ 는 패킹의 용도.
+    - 예외적으로 함수 호출 시 (정의 시 x) 는 언패킹의 용도.
+
++ 함수 정의 시 :
+    - def func(*args) : 값들이 튜플로 묶여서 args 에 전달
+        - func(1,2,3,4,5)
+    - def func(**kargs) : 값들이 딕셔너리로 묶여서 kargs 에 전달
+        - func(a = 1 , b = 2)
+
+
+
+       
+              
++ 함수 호출 시 :
+    - func(  *list  )   :   리스트의 값을 풀어서 전달
+    - func(  *dict  )   :   딕셔너리의 key 값을 풀어서 전달
+    - func( **dict  )   :   딕셔너리의 value 값을 풀어서 전달
+    - 딕셔너리를 (Key,Value) 형태로 풀어서 전달하고 싶을때는?
+        - func( *dict.items() ) 
