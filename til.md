@@ -812,6 +812,8 @@ func(st)
 
     + 'iterable' 한 객체가 iter() 함수를 통하여 'iterator 객체'로 생성됨
     + iter(iterable) -> iterator
+        - cf) iterator도 iterable 자리에 올 수 있다. 하지만 자기 자신을 그대로 반환 !
+
 
     - iter() , next() 지원
     + iter(f) 가 정의된 f.\_\_iter__() 메소드를 호출 : next 메소드를 가지는 iterator 객체를 반환
@@ -1260,3 +1262,219 @@ class Truck implements Car {
 }
 ```
 
+## 2020.11.25
+
+### python 접근제한
+
++ 기본적으로 클래스 내부 변수는 public 성질, 외부에서 접근 및 변경 가능
++ __멤버변수 / __method() 형태로 선언 -> private 지정 
+    - 외부에서 _클래스명__변수/메소드명() 으로 접근 가능하긴 함 !
+
+
+
+## 2020.12.01
+
+### python 지역변수 / 전역변수
+
++ 지역변수 : 함수 안에서 선언된 변수. 함수 안에서 생성되고, 함수 안에서만 사용된 후 소멸됨. 
++ 전역변수 : 함수 밖에서 선언된 변수. 프로그램 전체에서 이용 가능함. 함수 안에서도 사용 가능!
+    - 읽기 / 수정 ( append 등 ) : 함수 내에서 가능 
+    - '=' 대입 : 함수 내에서 불가능 / global 사용하면 가능
++ global : 함수 내에서 선언해도 전역변수로 사용 가능
++ 매개변수 : 매개변수도 지역변수 !
+
+```python 
+def plus(num) :
+    b = num + a # a를 선언하기 전에 사용해도 되나 ? oK
+                # 단, global을 사용하지 않으면, 전역변수에 '=' 을 사용한 대입은 불가능 !
+                # 단, 전역변수 참조 및 수정 ( append 등 ) 은 함수 내에서도 가능
+    return b
+a = 3
+
+print(plus(5)) # a를 선언한 뒤 함수를 호출하니까 괜찮음 !
+```
+### *args / **kargs 
+
++ 가변인자 (*args) : 입력 인자가 변하는 함수 ( 여러 개 입력 가능 )
+
+```python
+def func(x, *nums) : # *args 자리에 들어오는 값들을 튜플의 형태로 받음 / 일반 매개변수 뒤에 위치해야함 !
+    print('x =', x)
+    print(nums)
+```
++ 키워드 매개변수 (**kargs) :  입력 인자를 딕셔너리 형태로 받음 !
+
+```python
+
+def func2(x, **nums) : # **kargs 자리에 들어오는 값들을 딕셔너리의 형태로 받음 / 일반 매개변수 뒤에 위치해야함 !
+    
+    print('x =', x) # 일반 매개변수
+    print(nums)
+
+    
+
+dic = {'p':4} # 딕셔너리로 미리 정의한 뒤 
+func2('x', **dic) # **를 붙여서 **kargs 에 전달할 수도 있고
+
+func2('x', k=1,m=2,n=3) # Key = Value 의 형태로 전달할 수도 있다
+
+func2('x', k=1,m=2,n=3, **dic)  # 혼용도 가능 !
+```
+
+
+### 객체의 비교와 복사 
++ v1 == v2  : 내용 비교
++ v1 is v2  : 동등 비교 (주소값)
+
+
+
+```python 
+
+r1 = ['john',('man','USA'),[175,60]]
+r2 = list(r1)       # r1을 복사하여 r2에 대입 / r1과 r2는 다른 객체! 
+
+r1 is r2  # False        
+
+r1[0] is r2[0]  # True
+r1[1] is r2[1]  # True
+r1[2] is r2[2]  # True
+
+# 큰 틀은 다른 객체로 복사가 되지만, 복사한 객체 (리스트) 내의 값들은 같은 주소를 참조하게 복사됨 ! 
+# 즉, 서로 다른 객체지만 같은 값의 객체를 공유하고 있는 상태
+# r2에서 [2] 리스트 값을 변경하면 r1[2]도 변경됨 
+
+# 불변 값의 경우 공유해도 상관 없겠지만, 가변값의 경우 공유하면 문제 발생
+```
+>>>얕은 복사
+
+```python 
+import copy
+
+r1 = ['john',('man','USA'),[175,60]]
+r2 = copy.deepcopy(r1)       # copy 모듈의 deepcopy / 효율과 성능을 위해 가변값만 깊은 복사 !
+
+r1 is r2  # False        
+
+r1[0] is r2[0]  # True / 얕은복사
+r1[1] is r2[1]  # True / 얕은복사
+r1[2] is r2[2]  # False / 깊은복사
+
+r2[2][1] += 5
+
+r1[2]
+r2[2]
+
+# [0],[1] 의 경우는 불변값이므로, 같은 대상을 참조하여도 별 문제가 없음 -> 얕은복사
+# [2] 의 경우는 가변값이므로, 새로운 객체를 복사하여 따로 참조 -> 깊은복사
+
+
+```
+>>>깊은 복사
+
+### 함수도 객체이다 ?
++ 함수도 객체이기 때문에, 매개변수로 전달될 수도 있고, return으로 반환될 수도 있다 !
+
+```python
+def caller(fct) : # 함수 객체를 fct로 참조하여, 호출하는 함수
+    fct()
+
+def say() :
+    print('Hello world!')
+
+caller(say)
+
+
+
+
+def show(n) :
+    print(n)
+
+ref = show # show 함수 객체를 ref 도 참조하게 한다. 
+           # 정확히는, show 가 참조하는 함수 객체를 ref 도 참조하게 하는 것.
+ref('hello') 
+
+```
+>>> 함수도 객체임을 알 수 있다
+>>> 그렇다면 함수에 이름이 필요한 이유 ? 함수 객체를 참조하고 호출하기 위한 변수명일 뿐 !
+
+```python 
+
+def func(n):
+    def exp(x) :
+        return x ** n 
+    return exp 
+
+
+f2 = func(2) # x**2 를 반환하는 exp(x) 객체를 반환, f2가 이를 참조 
+f2(4) # 16
+f3 = func(3) # x**3 을 반환하는 exp(x) 객체를 반환, f3가 이를 참조
+f3(4) # 64
+```
+
++ lambda  :  lambda 매개변수 : 함수몸체 
+    - 위의 예에서, 함수명은 함수 객체를 참조하기 위한 변수명일 뿐을 확인함
+    - 변수명이 필요 없는 경우는 ?
+```python
+
+def show(n) :
+    print(n)
+
+ref = show # show 함수 객체를 ref 도 참조하게 한다. 
+           # 정확히는, show 가 참조하는 함수 객체를 ref 도 참조하게 하는 것.
+ref('hello') 
+
+# 위의 이 예시에서, 같은 객체의 레퍼런스 카운트가 2 이므로, 굳이 show 라는 함수명을 사용하지 않기로 한다.
+
+lambda x : print(x)         # 이와 같이 함수명 없이 매개변수/함수몸체로만 객체를 구성할 수 있다.
+type(lambda x : print(x)) 
+
+
+
+ref = lambda x : print(x) # 하지만 위와 같이 선언하면, 레퍼런스 카운트가 0이므로 , ref 변수명이 참조하게 한다 !
+ref('hello') 
+
+
+f = lambda x : x+2 # return 명시 없이도 자동으로 return 하게 됨.
+f(4)
+```
+>>> 함수는 기본적으로 함수명 / 매개변수 / 함수몸체로 구성되지만, 함수명을 생략하는 것 !
+
+### map & filter 
+
++ map(함수, iterable) 
+    - iterable한 객체의 값에 하나씩 인자로 입력받은 함수를 적용
+    - 적용한 결과를 저장한 iterator 객체를 반환 !
+
+
+```python
+a = map(lambda x : x*2 , [1,2,3])     # a 는 iterator 객체
+print(next(a))                        # 2
+print(next(a))                        # 4
+print(next(a))                        # 6
+b = list(a)                           # [2,4,6]
+```
+
+```python
+def sum(x,y) :
+    return x+y
+
+a = map(sum, [1,2,3], [10,20,30])      # 처음 전달받은 iterable[0] , 다음 전달받은 iterable[0] 을 sum, [1]과 [1] sum ....
+a = list(a)
+print(a)
+```
+>>> 전달된 함수의 인자가 여러개인 경우, 그 개수만큼 iterable 입력
+
+
++ filter : filter(함수, iterable)
+    - 값을 걸러내는 기능 
+    - 인자로 전달받은 함수의 에 iterable 객체의 값을 하나씩 전달
+    - 그 함수의 결과 return 값이 True 인 값들만 저장
+    - iterator 반환
+```python
+
+st = [1,2,3,4,5]
+filter(lambda x : x%2, st)                      # x%2 == 1 (True) 인 값만 담은 iterator
+filter(lambda n : not(n % 3), range(1,11) )     # n%3 == 0 (False) 인 값만 담은 iterator / not False == True
+filter(lambda n : not(n % 3), map(lambda x : x ** 2, range(1,11)))
+# 1~10 의 제곱수 중, 3의 배수만 담은 iterator
+```
