@@ -1641,3 +1641,54 @@ d = {k : v for k,v in zip(ks,vs)}
     - func( **dict  )   :   딕셔너리의 value 값을 풀어서 전달
     - 딕셔너리를 (Key,Value) 형태로 풀어서 전달하고 싶을때는?
         - func( *dict.items() ) 
+
+
+## 2020.12.03
+
+### Sequence 타입
+
++ 저장 순서 정보가 존재하는 자료형 !
+    - 변경하지 않는다면 저장한 순서대로 값의 순서가 유지된다.
+    - list, tuple, str . . .
+    - __인덱싱 / 슬라이싱__ 연산이 가능하다!
+
+### Mapping 타입 
+
++ 저장된 값의 순서 또는 위치 정보를 기록하지 않는 자료형
+    - key 와 value 의 mapping 으로 기록됨 
+    - dict
+    - 인덱싱 및 슬라이싱 불가능
+
+### Set 타입
+
++ 수학의 '집합' 을 표현한 자료형 
+    - 저장 순서가 없다. ( 내용만 같으면 A == B)
+    - set : mutable( 수정 가능 )
+    - frozenset : immutable 
+
+
+## 2020.12.21
+### list 정렬
+
+
++ sorted(list) : 함수 ( 새로운 객체 )
++ list.sort() : 메소드 ( 리스트 변경 )
+
+```python 
+ns = [('Kim', 22),('Lee',25),('Park',27)]
+
+def age(t) :
+    return t[1]
+
+ns.sort(key = age) # 정렬 매개변수로 함수 객체를 전달
+                   # ns 의 값마다 age를 적용해보고 정렬
+print(ns)
+
+ns.sort(key = lambda t : t[0])
+
+print(ns)
+
+ns.sort(key = len)
+```
+>>> sort 및 sorted 의 key 매개변수
+
