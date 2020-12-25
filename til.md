@@ -1977,7 +1977,10 @@ def deco(func) :
 >>> print(smile.__closure__[0].cell_contents) 
 <function smile at 0x7f92f2fb9160> # 클로져 내 func 변수가 smile 함수를 가리킴
 ```
->>> 입력 인자가 없는 함수의 데코레이션
+>>> 입력 인자가 없는 함수의 데코레이션  
+  
+    
+
 
 ```python
 def adder_2(n1,n2):
@@ -2001,7 +2004,10 @@ def deco(func) :
 >>> adder_3(2,3,4)
 2 + 3 + 4 = 9
 ```
->>> 전달 인자가 있는 함수의 데코레이션
+>>> 전달 인자가 있는 함수의 데코레이션  
+  
+    
+
 
 ```python
 
@@ -2020,4 +2026,4 @@ def smile() :
     print("^_^")
 
 ```
-
+>>> @ 를 사용하여 간단하게.
