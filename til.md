@@ -1692,3 +1692,332 @@ ns.sort(key = len)
 ```
 >>> sort 및 sorted 의 key 매개변수
 
+## 2020.12.23
+
+### isinstance, issubclass
+```python
+lass Car() :
+    def __init__(self,id = None) :
+        print("i am car")
+        print(id)
+
+class Son(Car) :
+    def __init__(self,id) :
+        super().__init__(id)
+        print("i am son")
+
+
+s = Son(123)
+
+print(type(list)) # list는 type 클래스의 객체이다
+print(isinstance(Son,Car)) # 하위클래스는 인스턴스가 아님!
+
+print(isinstance(list,type)) # list는 type 클래스의 하위클래스가 아닌, 객체이다
+print(issubclass(list,type)) # list는 type 클래스의 하위클래스가 아닌, 객체이다
+```
+
+
+
+### iterable 구현하기 
+
++ iterable -> __iter__ 메소드 보유 / iter() 에 전달가능  / iterator 를 반환해야 함
++ iterator -> __next__ 메소드 보유
+
+
++ iterable & iterator -> __iter__ / __next__ 메소드 둘 다 보유
+    - __iter__(self) : return self 
+    - 스스로를 반환 / 반환한 self가 __next__ 메소드를 보유하고 있으므로, 
+    - iter() 의 결과가 iterator를 반환하는 것 맞음! 즉, iterable !
+    - self 는 iter()를 통하여 iterator를 반환하는 iterable 객체이면서,
+    - 동시에 __next__ 메소드를 보유한 iterator 임
+
+```python
+class Myiterable() :
+    def __init__(self,data) :
+        self.data = data 
+
+    def __iter__(self) :
+        return iter(data)
+
+    # 입력된 data의 iterator 를 빌리기 !
+    # 아무튼 iter() 로 iterator 를 반환하니까 클래스가 iterable 객체는 맞음.
+    # 단, data 에 iterable 객체가 들어와야겠지 ?
+
+
+
+class Myiterator() :
+    def __init__(self,data) :
+        self.data = data
+        self.count = 0
+    def __next__(self)  :
+        if self.count >= len(self.data) :
+            StopIteration
+        self.count += 1
+        return self.data[self.count - 1]
+
+    # next()로 하나씩 값을 반환하고, StopIteration 으로 중단하는 
+    # 이 클래스는 iterator 객체임
+```
+>>> iterator만 만들어서 뭐하나. 다른 곳에서 iter()를 통해서 이 iterator 가 반환되게 하려고?
+
+```python
+class Myiterator2() :
+    def __init__(self,data) :
+        self.data = data
+        self.count = 0
+
+    def __next__(self)  :      # __next__ 메소드를 보유한 iterator 객체인데,
+        if self.count >= len(self.data) :
+            StopIteration
+        self.count += 1
+        return self.data[self.count - 1]
+
+    
+
+    def __iter__(self) :       # __iter__를 통해 스스로를 반환하면 
+        return self            # __iter__를 통해 iterator 를 반환하는
+                               # iterable의 정의도 만족.
+
+
+    
+```
+>>> 스스로가 iterator이자 iterable한 클래스 구현함으로써, iterable한 객체의 본연 용도 사용 가능!
+
+
+### 연산자 오버로딩 
+
++ __+__ / __+=__ 가 필요한 상황을 구분하자. 
+
++ __\__add_\___ : 기존 피연산자의 값을 (되도록) 변경시키지 말기 !
+    - ex ) n3 = n1 + n2 
+        - 연산자가 n1과 n2의 값을 변경시키지 않음
+    
+    - 연산의 결과를 새로 return 하는 형식으로 !
+
+
++ in-place 연산
+    - ex) n1 += n2 처럼, 기존 값 변경되는 경우 가 in-place 연산 
+        - n1 = n1 + n2 와 같긴 하나,
+        - __+__ 와 __+=__ 가 성격을 달리 해야하는 상황 가정 ! 
+    - __\__iadd_\___ 를 정의하여 __+=__ 에 대해 연산자 오버로딩
+        - 정의하지 않으면, 원래처럼 풀어서 해석됨!
+        - __return self__ 필수 ! 
+            - n1 += n2 의 결과로 n1 반환
+
+
+    - 참고 / immutable 객체 (정수, 문자열) 은 in-place 불가능
+        - n = 1
+        - n += 1 
+        - n = n + 1 
+        - n이 새로운 객체 2를 가르키게 됨 ( 가르키던 객체가 변경 불가능 하기 때문 )
+
+## 2020.12.24
+
+### __dict__ / __slots__
+
++ _\_dict__ : 기본적으로 파이썬의 객체는 딕셔너리를 통해 인스턴스 변수들을 관리.
+    - 클래스가 아닌 인스턴스당 하나씩
+    - 딕셔너리를 참조하여 변수를 관리함
+    - pros) 유연성 확보 : 변수의 추가 및 삭제
+    - cons) 효율성 저하 : 내부적으로 관리하는 것 보다 참조하는 과정이 더 생김
+
++ _\_slots__ : 딕셔너리를 생성하지 않고, 내부에서 변수를 직접 관리
+    - 선언된 튜플 외의, 변수의 추가나 삭제를 제한함
+        - tuple 은 immutable 객체이기 때문
+    
+
+```python
+class Point() :
+
+    __slots__ = ('x', 'y')       # x, y 좌표 이외의 변수가 추가될 일이 없기에, 제한한다
+
+
+    def __init__(self, x, y) :
+        self.x = x
+        self.y = y
+
+p1 = Point(3,5)
+p1.w = 1 # 오류 발생 
+
+
+```
+
+
+### property 
++ 인스턴스 변수에 직접 접근하지 않고 프로퍼티 객체를 통해 간접 접근
++ 프로퍼티 객체는 클래스 내 변수 형태로 저장
++ P = property(getter,setter)
+    - P 라는 변수로 접근하지만, 실은 getter / setter 메소드를 통해 인스턴스 변수에 접근
+    - 프로퍼티 객체를 클래스 내 변수 P 에 할당
+        - 대입연산자 왼쪽 ( P = ) 형태로 호출 시 : setter / 값 넣기
+        - 대입연산자 오른쪽 ( = P ) 형태로 호출 시 : getter / 값 꺼내기
+
++ P = property() : 객체 생성
++ P = P.getter(getn) 
++ P = P.setter(setn)
+    - getter / setter 설정 시 설정된 새로운 객체 반환하기 때문에 P 변수에 다시 할당
+
+
+```python
+class Natural() :
+    def __init__(self,n):
+        self.n =n
+    def getn(self) :
+        return self.n
+    def setn(self, n) :
+        self.n = n 
+    k = property(getn,setn)
+
+n1 = Natural(1)
+n2 = Natural(2)
+n3 = Natural(3)
+
+
+n1.k = n2.k + n3.k  
+# n1.setn(n2.getn()+n3.getn())
+
+print(n1.k)
+```
+
+```python
+class Natural() :
+    def __init__(self,n):
+        self.__n =n
+
+    @property               # == n = property(n)                            
+    def n(self) :           # 1. property 객체 생성
+        return self.__n     # 2. n 메소드를 getter로 등록
+                            # 3. n 이 메소드가 아닌 property를 참조하게 함.
+  
+  
+    @n.setter
+    def setn(self, n) :
+        self.__n = n 
+    k = property(getn,setn)
+
+
+
+print(n1.k)
+```
+
+## 2020.12.25
+
+### 네스티드 함수 / 클로져
+
++ 클로져 : 함수의 종료시 사라지는 변수를 잠시 저장해두는 기술
+
+```python
+def maker(m):
+    def inner(n) :  # 함수도 객체, 함수의 이름은 그 변수명 !
+        return m*n
+    return inner    # 함수도 객체기에 반환 가능
+
+
+>>> print(maker)
+<function maker at 0x7fa1026b9160>
+>>> print(inner)
+NameError: name 'inner' is not defined 
+# maker 내에서만 존재하는 변수명이기 때문에, 이렇게 호출할 수 없다.
+
+
+>>> func = maker(2) # inner 라는 함수 객체를 반환하고, func라는 변수명을 붙인 것
+>>> print(func)
+<function maker.<locals>.inner at 0x7f8355512670>
+
+
+>>> func(7)     # inner(7) 과 같다는 건데, 
+14              # m 은 maker 함수 밖에서 존재하지 않는데
+                # n = 입력인자 참조, m = 참조할 대상이 없는데...
+                # m * n 이 가능한가..?
+
+# 클로져 기술로 잠시 inner (func) 객체 안에 m 의 값을 저장!
+
+>>> func.__closure__[0].cell_contents
+2
+
+
+```
+
+### 데코레이터
+
++ 꾸며주고, 보강하는 함수 혹은 클래스 (  + 알파 )
+
+```python
+def smile() :
+    print("^_^")
+
+def deco(func) :
+    def df() :
+        print("꾸미기")
+        func()
+        print("꾸미기")
+    return df           # df 객체를 반환하는 deco 함수
+
+>>> smile()
+^_^
+
+>>> print(smile)
+<function smile at 0x7f92f2fb9160> # smile 변수가 smile 함수를 가리킴
+
+
+
+
+
+>>> smile = deco(smile)  # deco 는 df 객체를 반환. smile 변수가 df 함수를 가리킴
+>>> smile()
+꾸미기
+^_^
+꾸미기
+
+
+>>> print(smile)
+<function deco.<locals>.df at 0x7f92f4513790> # smile 변수가 df 함수를 가리킴
+
+
+>>> print(smile.__closure__[0].cell_contents) 
+<function smile at 0x7f92f2fb9160> # 클로져 내 func 변수가 smile 함수를 가리킴
+```
+>>> 입력 인자가 없는 함수의 데코레이션
+
+```python
+def adder_2(n1,n2):
+    return n1+n2
+
+def adder_3(n1,n2,n3):
+    return n1+n2+n3
+
+def deco(func) :
+    def deco_adder(*args) :                 # 입력 인자를 튜플로 패킹 ( 튜플 이름이 args )
+        print(*args, sep=' + ', end=' ')    # args 튜플을 언패킹
+        print("= {}".format(func(*args)))   # args 튜플을 언패킹해서 func 에 하나씩 전달
+    return deco_adder                       # func 는 클로져에 저장된 상태
+
+
+>>> adder_2 = deco(adder_2)
+>>> adder_2(2,3)
+2 + 3 = 5
+
+>>> adder_3 = deco(adder_3)
+>>> adder_3(2,3,4)
+2 + 3 + 4 = 9
+```
+>>> 전달 인자가 있는 함수의 데코레이션
+
+```python
+
+
+def deco(func) :
+    def df() :
+        print("꾸미기")
+        func()
+        print("꾸미기")
+    return df           # df 객체를 반환하는 deco 함수
+
+
+                        # 뒤에 나올 함수가 deco 함수를 통과할 것이라는 뜻.
+@deco                   # smile = deco(smile) / 통과한 객체를 다시 smile 변수로 할당
+def smile() :
+    print("^_^")
+
+```
+
