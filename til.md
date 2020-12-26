@@ -1696,7 +1696,7 @@ ns.sort(key = len)
 
 ### isinstance, issubclass
 ```python
-lass Car() :
+class Car :
     def __init__(self,id = None) :
         print("i am car")
         print(id)
@@ -1732,7 +1732,7 @@ print(issubclass(list,type)) # list는 type 클래스의 하위클래스가 아�
     - 동시에 __next__ 메소드를 보유한 iterator 임
 
 ```python
-class Myiterable() :
+class Myiterable :
     def __init__(self,data) :
         self.data = data 
 
@@ -1745,7 +1745,7 @@ class Myiterable() :
 
 
 
-class Myiterator() :
+class Myiterator :
     def __init__(self,data) :
         self.data = data
         self.count = 0
@@ -1761,7 +1761,7 @@ class Myiterator() :
 >>> iterator만 만들어서 뭐하나. 다른 곳에서 iter()를 통해서 이 iterator 가 반환되게 하려고?
 
 ```python
-class Myiterator2() :
+class Myiterator2 :
     def __init__(self,data) :
         self.data = data
         self.count = 0
@@ -1827,7 +1827,7 @@ class Myiterator2() :
     
 
 ```python
-class Point() :
+class Point :
 
     __slots__ = ('x', 'y')       # x, y 좌표 이외의 변수가 추가될 일이 없기에, 제한한다
 
@@ -1859,7 +1859,7 @@ p1.w = 1 # 오류 발생
 
 
 ```python
-class Natural() :
+class Natural :
     def __init__(self,n):
         self.n =n
     def getn(self) :
@@ -1880,7 +1880,7 @@ print(n1.k)
 ```
 
 ```python
-class Natural() :
+class Natural :
     def __init__(self,n):
         self.__n =n
 
@@ -2027,3 +2027,135 @@ def smile() :
 
 ```
 >>> @ 를 사용하여 간단하게.
+
+
+## 2020.12.26
+
+### 클래스 변수 / static / 클래스 메소드
+
++ 클래스 변수 : 객체가 아닌 '클래스 소속'의 변수
+    - 모든 객체가 공유함
+    - 클래스명으로 직접 호출 / 객체명으로 호출 둘 다 가능
+    - 메소드와 같은 라인에 변수 선언
+
+```python
+class Simple :
+    count = 0       # 클래스 변수의 선언
+    def __init__(self) :
+        Simple.count +=1 
+
+
+
+>>> print(Simple.count)
+0
+>>> s1 = Simple() 
+>>> print(Simple.count)
+1
+
+```
+
++ static 메소드 : 객체가 아닌 '클래스 소속'의 메소드
+    - 클래스 변수와 같은 개념
+    - 기존 인스턴스 메소드의 전달인자 = self
+    - self 는 인스턴스를 메소드의 인자로 전달하는 것이기 떄문에, self 를 생략한다
+    - staticmethod() / @staticmethod
+```python
+class Simple :
+    count = 0                           # 클래스 변수의 선언
+    def __init__(self) :
+        Simple.count +=1 
+    def get_count() :                   # 인스턴스를 인자로 전달하는 self 생략
+        return Simple.count
+
+    get_count = staticmethod(get_count) # static 메소드로 선언
+
+>>> print(Simple.get_count())
+0
+
+>>> s1 = Simple() 
+>>> print(Simple.get_count())           
+1
+>>> print(s1.get_count())               # 인스턴스를 통해서도 호출 가능
+1
+```
+```python
+class Simple :
+    count = 0                           
+    def __init__(self) :
+        Simple.count +=1 
+    @staticmethod             # == get_count = staticmethod(get_count)
+    def get_count() :                   \
+        return Simple.count
+
+
+```
+
++ 클래스 메소드 : static 메소드와 한가지 차이!
+    - 인스턴스를 self 키워드를 통해 인자로 전달하였듯,
+    - 클래스 자체를 cls 키워드로 인자로 전달 !
+
+```python
+class Simple :
+    count = 0                           
+    def __init__(self) :
+        Simple.count +=1 
+    @classmethod             
+    def get_count(cls) :                   
+        return cls.count     # cls == Simple 클래스  
+
+
+```
+>>> static 메소드와 큰 차이가 없어 보임. 언제 클래스 메소드를 사용할까?
+```python
+class Date :
+    def __init__(self,y,m,d) :
+        self.year = y
+        self.month = m
+        self.day = d
+        
+    def show(self) :
+        print('DATE : {}/{}/{}'.format(self.year,self.month,self.day)) 
+
+    @classmethod
+    def next_day(cls,d) :                       # Date 객체 d를 입력
+        return cls(d.year, d.month, d.day+1)    # d 의 다음날의 Date 객체 반환
+    @staticmethod
+    def static_next_day(self) :
+        return Date
+
+
+class KDate(Date) :                             # Date 클래스 상속
+    def show(self) :
+        print('KOREA : {}/{}/{}'.format(self.year,self.month,self.day)) 
+
+class JDate(Date) :                             # Date 클래스 상속
+    def show(self) :
+        print('JAPAN : {}/{}/{}'.format(self.year,self.month,self.day)) 
+
+
+
+>>> day1 = Date(2020,1,1)
+>>> day2 = Date.next_day(day1)  # 클래스 메소드 호출
+>>> day2.show()
+DATE : 2020/1/2                 # 반환된 cls = Date
+
+
+
+>>> day1 = KDate(2020,1,1)      
+>>> day2 = KDate.next_day(day1) # 클래스 메소드 호출
+>>> day2.show()
+KOREA : 2020/1/2                # 반환된 cls = KDate
+
+
+
+>>> day1 = Date(2020,1,1)       
+>>> day2 = JDate.next_day(day1) # 클래스 메소드 호출 / 입력인자 d에 JDate가 아닌 Date 전달
+>>> day2.show()         
+JAPAN : 2020/1/2                # 반환된 cls = JDate
+                                # Date 클래스의 메소드가 호출되었지만,
+                                # cls 에 전달된 것은 해당 메소드를 호출한 JDate 임을 볼 수 있다.
+```
+>>> 클래스 메소드는 인자로 클래스 정보를 받는다. 이정보는 호출 경로에 따라 __유동적__ 이다.
+
+
+### __name__ / __main__
