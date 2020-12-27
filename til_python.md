@@ -734,6 +734,7 @@ r2[2]
 
 ### 함수도 객체이다 ?
 + 함수도 객체이기 때문에, 매개변수로 전달될 수도 있고, return으로 반환될 수도 있다 !
++ __함수명도 변수명이다!__
 
 ```python
 def caller(fct) : # 함수 객체를 fct로 참조하여, 호출하는 함수
@@ -757,7 +758,7 @@ ref('hello')
 ```
 >>> 함수도 객체임을 알 수 있다  
 
->>> 그렇다면 함수에 이름이 필요한 이유 ? 함수 객체를 참조하고 호출하기 위한 변수명일 뿐 !
+>>> 그렇다면 함수에 이름이 필요한 이유 ? 함수 객체를 참조하고 호출하기 위한 __변수명__ 일 뿐 !
 
 ```python 
 
@@ -799,13 +800,13 @@ ref('hello')
 f = lambda x : x+2 # return 명시 없이도 자동으로 return 하게 됨.
 f(4)
 ```
->>> 함수는 기본적으로 함수명 / 매개변수 / 함수몸체로 구성되지만, 함수명을 생략하는 것 !
+>>> 함수는 기본적으로 __함수명 / 매개변수 / 함수몸체로 구성되지만, 함수명을 생략하는 것__ !
 
 ### map & filter 
 
-+ map(함수, iterable) 
++ __map(함수, iterable)__
     - iterable한 객체의 값에 하나씩 인자로 입력받은 함수를 적용
-    - 적용한 결과를 저장한 iterator 객체를 반환 !
+    - 적용한 결과를 저장한 __iterator 객체__ 를 반환 !
 
 
 ```python
@@ -827,11 +828,11 @@ print(a)
 >>> 전달된 함수의 인자가 여러개인 경우, 그 개수만큼 iterable 입력
 
 
-+ filter : filter(함수, iterable)
++ __filter : filter(함수, iterable)__
     - 값을 걸러내는 기능 
     - 인자로 전달받은 함수의 에 iterable 객체의 값을 하나씩 전달
-    - 그 함수의 결과 return 값이 True 인 값들만 저장
-    - iterator 반환
+    - 그 함수의 결과 return 값이 __True 인 값들만 저장__
+    - __iterator 반환__
 ```python
 
 st = [1,2,3,4,5]
@@ -983,7 +984,7 @@ d = {k : v for k,v in zip(ks,vs)}
 ### *args , **kargs 
 
 + 기본적으로 __'*'__ 는 패킹의 용도.
-    - 예외적으로 함수 호출 시 (정의 시 x) 는 언패킹의 용도.
+    - 예외적으로 __함수 호출 시 (정의 시 x) 는 언패킹__ 의 용도.
 
 + 함수 정의 시 :
     - def func(*args) : 값들이 튜플로 묶여서 args 에 전달
@@ -997,9 +998,9 @@ d = {k : v for k,v in zip(ks,vs)}
               
 + 함수 호출 시 :
     - func(  *list  )   :   리스트의 값을 풀어서 전달
-    - func(  *dict  )   :   딕셔너리의 key 값을 풀어서 전달
-    - func( **dict  )   :   딕셔너리를 key = value 형태로 풀어서 전달
-    - 딕셔너리를 (Key,Value) 형태로 풀어서 전달하고 싶을때는?
+    - func(  *dict  )   :   딕셔너리의 __key 값__ 을 풀어서 전달
+    - func( **dict  )   :   딕셔너리를 __key = value 형태__ 로 풀어서 전달
+    - 딕셔너리를 __(Key,Value) 형태__ 로 풀어서 전달하고 싶을때는?
         - func( *dict.items() ) 
 
 
@@ -1080,16 +1081,16 @@ print(issubclass(list,type)) # list는 type 클래스의 하위클래스가 아�
 
 ### iterable 구현하기 
 
-+ iterable -> __iter__ 메소드 보유 / iter() 에 전달가능  / iterator 를 반환해야 함
-+ iterator -> __next__ 메소드 보유
++ iterable -> \_\_iter\__ 메소드로 __iterator 를 반환__ 해야함.
++ iterator -> \_\_\next_\_ 메소드 보유한 객체
 
 
-+ iterable & iterator -> __iter__ / __next__ 메소드 둘 다 보유
-    - __iter__(self) : return self 
-    - 스스로를 반환 / 반환한 self가 __next__ 메소드를 보유하고 있으므로, 
-    - iter() 의 결과가 iterator를 반환하는 것 맞음! 즉, iterable !
++ __iterable & iterator__ -> \_\_iter\__ / \__next\_\_ 메소드 둘 다 보유
+    - \_\_iter\__(self) : return self 
+    - 스스로를 반환 / 반환한 self가 \_\_next\__ 메소드를 보유하고 있으므로, 
+    - iter() 의 결과가 __iterator를 반환__ 하는 것 맞음! 즉, __iterable__ !
     - self 는 iter()를 통하여 iterator를 반환하는 iterable 객체이면서,
-    - 동시에 __next__ 메소드를 보유한 iterator 임
+    - 동시에 \_\_next\__ 메소드를 보유한 __iterator__ 임
 
 ```python
 class Myiterable :
@@ -1148,7 +1149,7 @@ class Myiterator2 :
 
 + __+__ / __+=__ 가 필요한 상황을 구분하자. 
 
-+ __\__add_\___ : 기존 피연산자의 값을 (되도록) 변경시키지 말기 !
++ __\_\_add_\___ : 기존 피연산자의 값을 (되도록) 변경시키지 말기 !
     - ex ) n3 = n1 + n2 
         - 연산자가 n1과 n2의 값을 변경시키지 않음
     
@@ -1159,7 +1160,7 @@ class Myiterator2 :
     - ex) n1 += n2 처럼, 기존 값 변경되는 경우 가 in-place 연산 
         - n1 = n1 + n2 와 같긴 하나,
         - __+__ 와 __+=__ 가 성격을 달리 해야하는 상황 가정 ! 
-    - __\__iadd_\___ 를 정의하여 __+=__ 에 대해 연산자 오버로딩
+    - __\_\_iadd_\___ 를 정의하여 __+=__ 에 대해 연산자 오버로딩
         - 정의하지 않으면, 원래처럼 풀어서 해석됨!
         - __return self__ 필수 ! 
             - n1 += n2 의 결과로 n1 반환
@@ -1175,21 +1176,21 @@ class Myiterator2 :
 
 ### __dict__ / __slots__
 
-+ _\_dict__ : 기본적으로 파이썬의 객체는 딕셔너리를 통해 인스턴스 변수들을 관리.
-    - 클래스가 아닌 인스턴스당 하나씩
-    - 딕셔너리를 참조하여 변수를 관리함
++ \_\_dict__ : 기본적으로 파이썬의 객체는 딕셔너리를 통해 인스턴스 변수들을 관리.
+    - 클래스가 아닌 __인스턴스당 하나__ 씩
+    - __딕셔너리를 참조__ 하여 변수를 관리함
     - pros) 유연성 확보 : 변수의 추가 및 삭제
     - cons) 효율성 저하 : 내부적으로 관리하는 것 보다 참조하는 과정이 더 생김
 
-+ _\_slots__ : 딕셔너리를 생성하지 않고, 내부에서 변수를 직접 관리
-    - 선언된 튜플 외의, 변수의 추가나 삭제를 제한함
-        - tuple 은 immutable 객체이기 때문
++ \_\_slots__ : 딕셔너리를 생성하지 않고, 내부에서 변수를 직접 관리
+    - 선언된 튜플 외의, __변수의 추가나 삭제를 제한함__
+        - __tuple 은 immutable 객체__ 이기 때문
     
 
 ```python
 class Point :
 
-    __slots__ = ('x', 'y')       # x, y 좌표 이외의 변수가 추가될 일이 없기에, 제한한다
+    __slots__ = ('x', 'y')       # x, y 좌표 이외의 변수가 추가될 일이 없기에, immutable인 튜플로 제한한다
 
 
     def __init__(self, x, y) :
@@ -1204,18 +1205,18 @@ p1.w = 1 # 오류 발생
 
 
 ### property 
-+ 인스턴스 변수에 직접 접근하지 않고 프로퍼티 객체를 통해 간접 접근
-+ 프로퍼티 객체는 클래스 내 변수 형태로 저장
++ 인스턴스 변수에 직접 접근하지 않고 __프로퍼티 객체를 통해 간접 접근__
++ 프로퍼티 객체는 __클래스 내 변수 형태로 저장__
 + P = property(getter,setter)
-    - P 라는 변수로 접근하지만, 실은 getter / setter 메소드를 통해 인스턴스 변수에 접근
+    - P 라는 변수로 접근하지만, 실은 __getter / setter 메소드를 통해__ 인스턴스 변수에 접근
     - 프로퍼티 객체를 클래스 내 변수 P 에 할당
-        - 대입연산자 왼쪽 ( P = ) 형태로 호출 시 : setter / 값 넣기
-        - 대입연산자 오른쪽 ( = P ) 형태로 호출 시 : getter / 값 꺼내기
+        - 대입연산자 왼쪽 ( P = ) 형태로 호출 시 : setter 호출 / 값 넣기
+        - 대입연산자 오른쪽 ( = P ) 형태로 호출 시 : getter 호출 / 값 꺼내기
 
 + P = property() : 객체 생성
 + P = P.getter(getn) 
 + P = P.setter(setn)
-    - getter / setter 설정 시 설정된 새로운 객체 반환하기 때문에 P 변수에 다시 할당
+    - getter / setter 설정 시 __설정된 새로운 프로퍼티 객체 반환__ 하기 때문에 P 변수에 다시 할당
 
 
 ```python
@@ -1250,14 +1251,14 @@ class Natural :
                             # 3. n 이 메소드가 아닌 property를 참조하게 함.
   
   
-    @n.setter
-    def setn(self, n) :
-        self.__n = n 
-    k = property(getn,setn)
+    @n.setter               # == n = n.setter(n)
+    def n(self, n) :        # 1. 현재 n 은 getter 만 등록된 property 객체
+        self.__n = n        # 2. n.setter로 getter, setter 모두 가진 property 객체 반환
+                            # 3. n 에 위에서 반환된 property 객체를 대입
 
 
 
-print(n1.k)
+print(n1.n)
 ```
 
 ## 2020.12.25
@@ -1393,8 +1394,8 @@ def smile() :
 
 ### 클래스 변수 / static / 클래스 메소드
 
-+ 클래스 변수 : 객체가 아닌 '클래스 소속'의 변수
-    - 모든 객체가 공유함
++ 클래스 변수 : 객체가 아닌 __'클래스 소속'__ 의 변수
+    - __모든 인스턴스가 공유__ 함
     - 클래스명으로 직접 호출 / 객체명으로 호출 둘 다 가능
     - 메소드와 같은 라인에 변수 선언
 
@@ -1411,13 +1412,15 @@ class Simple :
 >>> s1 = Simple() 
 >>> print(Simple.count)
 1
+>>> print(s1.count)
+1
 
 ```
 
-+ static 메소드 : 객체가 아닌 '클래스 소속'의 메소드
++ static 메소드 : 객체가 아닌 __'클래스 소속'__ 의 메소드
     - 클래스 변수와 같은 개념
     - 기존 인스턴스 메소드의 전달인자 = self
-    - self 는 인스턴스를 메소드의 인자로 전달하는 것이기 떄문에, __self 를 생략한다__
+    - __self 는 인스턴스 자신 메소드의 인자로 전달__ 하는 것이기 떄문에, __self 를 생략한다__
     - staticmethod() / @staticmethod
 ```python
 class Simple :
@@ -1450,9 +1453,9 @@ class Simple :
 
 ```
 
-+ 클래스 메소드 : static 메소드와 한가지 차이!
++ __클래스 메소드__ : static 메소드와 __한가지 차이!__
     - 인스턴스를 self 키워드를 통해 인자로 전달하였듯,
-    - 클래스 자체를 cls 키워드로 인자로 전달 !
+    - __클래스 자체를 _cls_ 키워드로 인자로 전달 !__
 
 ```python
 class Simple :
@@ -1465,7 +1468,7 @@ class Simple :
 
 
 ```
->>> static 메소드와 큰 차이가 없어 보임. 언제 클래스 메소드를 사용할까?
+>>> static 메소드와 큰 차이가 없어 보임. __언제 클래스 메소드를 사용할까?__
 ```python
 class Date :
     def __init__(self,y,m,d) :
